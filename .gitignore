@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# Virtual environment
+venv/
+
+# Environment config
+.env
+
+# Logs and traces
+*.log
+trace_logs.jsonl
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# Editor configs
+.vscode/
+.idea/
