@@ -37,3 +37,9 @@ def debug_env():
         "CLICKHOUSE_HOST": os.environ.get("CLICKHOUSE_HOST"),
         "ALL_ENV": dict(os.environ)  # TEMP: full dump for debugging
     }
+@app.get("/envcheck")
+def check_env():
+    return {
+        "USE_CLICKHOUSE": config.USE_CLICKHOUSE,
+        "CLICKHOUSE_HOST": config.CLICKHOUSE_HOST
+    }
