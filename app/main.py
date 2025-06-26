@@ -35,4 +35,5 @@ def debug_env():
     return {
         "USE_CLICKHOUSE": os.environ.get("USE_CLICKHOUSE"),
         "CLICKHOUSE_HOST": os.environ.get("CLICKHOUSE_HOST"),
+        "ALL_ENV": dict(os.environ)  # TEMP: full dump for debugging
     }
