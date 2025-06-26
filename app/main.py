@@ -2,7 +2,6 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 import os
-
 from app.routes import webhook, send
 
 # Load environment variables from .env
@@ -31,4 +30,9 @@ app.include_router(send.router, prefix="/send")
 def read_root():
     return {"status": "Verbotix WhatsApp API is running"}
 
-
+@app.get("/env-debug")
+def debug_env():
+    return {
+        "USE_CLICKHOUSE": os.environ.get("USE_CLICKHOUSE"),
+        "CLICKHOUSE_HOST": os.environ.get("CLICKHOUSE_HOST"),
+    }
