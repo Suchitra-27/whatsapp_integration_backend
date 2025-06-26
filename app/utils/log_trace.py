@@ -1,11 +1,14 @@
 import os
 from datetime import datetime
 import clickhouse_connect
-
-USE_CLICKHOUSE = os.getenv("USE_CLICKHOUSE", "false").lower() == "true"
-
-print("DEBUG: USE_CLICKHOUSE =", os.getenv("USE_CLICKHOUSE"))
-
+from app.config.env import (
+    USE_CLICKHOUSE,
+    CLICKHOUSE_HOST,
+    CLICKHOUSE_PORT,
+    CLICKHOUSE_USERNAME,
+    CLICKHOUSE_PASSWORD
+)
+print("DEBUG: USE_CLICKHOUSE =", USE_CLICKHOUSE)
 
 def log_trace(trace_id, agent_id, channel, token_used=None, fallback_path=None, delivery_status=None):
     if not USE_CLICKHOUSE:
@@ -27,7 +30,6 @@ def log_trace(trace_id, agent_id, channel, token_used=None, fallback_path=None, 
         secure=True
     )
 
-    # ✅ Correct format: list of rows (list of lists), column_names must match
     columns = [
         "trace_id",
         "agent_id",
@@ -48,7 +50,5 @@ def log_trace(trace_id, agent_id, channel, token_used=None, fallback_path=None, 
         datetime.utcnow()
     ]]
 
-    # ✅ Must include column_names parameter when sending list of lists
     client.insert("trace_logs", rows, column_names=columns)
-
     print(f"\U0001f4ca Trace logged to ClickHouse: {trace_id}")
