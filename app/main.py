@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 import os
 from app.routes import webhook, send
+from app.config.env import USE_CLICKHOUSE, CLICKHOUSE_HOST
 
 # Load environment variables from .env
 load_dotenv()
@@ -31,15 +32,9 @@ def read_root():
     return {"status": "Verbotix WhatsApp API is running"}
 
 @app.get("/env-debug")
-def debug_env():
+def env_debug():
     return {
-        "USE_CLICKHOUSE": os.environ.get("USE_CLICKHOUSE"),
-        "CLICKHOUSE_HOST": os.environ.get("CLICKHOUSE_HOST"),
-        "ALL_ENV": dict(os.environ)  # TEMP: full dump for debugging
+        "USE_CLICKHOUSE": USE_CLICKHOUSE,
+        "CLICKHOUSE_HOST": CLICKHOUSE_HOST
     }
-@app.get("/envcheck")
-def check_env():
-    return {
-        "USE_CLICKHOUSE": config.USE_CLICKHOUSE,
-        "CLICKHOUSE_HOST": config.CLICKHOUSE_HOST
-    }
+
