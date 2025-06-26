@@ -30,3 +30,5 @@ app.include_router(send.router, prefix="/send")
 @app.get("/")
 def read_root():
     return {"status": "Verbotix WhatsApp API is running"}
+
+

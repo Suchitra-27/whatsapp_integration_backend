@@ -1,49 +1,53 @@
 import os
-import json
-import datetime
-from uuid import uuid4
+from datetime import datetime
+import clickhouse_connect
 
 USE_CLICKHOUSE = os.getenv("USE_CLICKHOUSE", "false").lower() == "true"
+print("DEBUG: USE_CLICKHOUSE =", os.getenv("USE_CLICKHOUSE"))
 
-# Optional: install client only if ClickHouse is used
-if USE_CLICKHOUSE:
-    from clickhouse_driver import Client
 
-    CLICKHOUSE_HOST = os.getenv("CLICKHOUSE_HOST", "localhost")
-    CLICKHOUSE_DB = os.getenv("CLICKHOUSE_DB", "verbotix")
-    CLICKHOUSE_TABLE = os.getenv("CLICKHOUSE_TABLE", "trace_logs")
-
-    client = Client(host=CLICKHOUSE_HOST, database=CLICKHOUSE_DB)
-
-def log_trace(trace_id, agent_id, channel, token_used=None, fallback_path=None):
-    timestamp = datetime.datetime.utcnow().isoformat()
-
-    if USE_CLICKHOUSE:
-        try:
-            client.execute(f"""
-                INSERT INTO {CLICKHOUSE_TABLE} (timestamp, trace_id, agent_id, channel, token_used, fallback_path)
-                VALUES (%(timestamp)s, %(trace_id)s, %(agent_id)s, %(channel)s, %(token_used)s, %(fallback_path)s)
-            """, {
-                "timestamp": timestamp,
-                "trace_id": trace_id,
-                "agent_id": agent_id,
-                "channel": channel,
-                "token_used": token_used,
-                "fallback_path": fallback_path
-            })
-        except Exception as e:
-            print("ClickHouse Logging Error:", e)
-
-    else:
-        # Local fallback logging
-        log_data = {
-            "timestamp": timestamp,
+def log_trace(trace_id, agent_id, channel, token_used=None, fallback_path=None, delivery_status=None):
+    if not USE_CLICKHOUSE:
+        print("\U0001f4dd Trace Log (local fallback):", {
             "trace_id": trace_id,
             "agent_id": agent_id,
             "channel": channel,
             "token_used": token_used,
-            "fallback_path": fallback_path
-        }
-        log_path = "trace_logs.jsonl"
-        with open(log_path, "a") as f:
-            f.write(json.dumps(log_data) + "\n")
+            "fallback_path": fallback_path,
+            "delivery_status": delivery_status
+        })
+        return
+
+    client = clickhouse_connect.get_client(
+        host=os.getenv("CLICKHOUSE_HOST"),
+        port=int(os.getenv("CLICKHOUSE_PORT", "8443")),
+        username=os.getenv("CLICKHOUSE_USERNAME"),
+        password=os.getenv("CLICKHOUSE_PASSWORD"),
+        secure=True
+    )
+
+    # ✅ Correct format: list of rows (list of lists), column_names must match
+    columns = [
+        "trace_id",
+        "agent_id",
+        "channel",
+        "token_used",
+        "fallback_path",
+        "delivery_status",
+        "timestamp"
+    ]
+
+    rows = [[
+        trace_id,
+        agent_id,
+        channel,
+        token_used,
+        fallback_path,
+        delivery_status,
+        datetime.utcnow()
+    ]]
+
+    # ✅ Must include column_names parameter when sending list of lists
+    client.insert("trace_logs", rows, column_names=columns)
+
+    print(f"\U0001f4ca Trace logged to ClickHouse: {trace_id}")
