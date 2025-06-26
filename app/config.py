@@ -1,7 +1,12 @@
 import os
+from dotenv import load_dotenv
 
-USE_CLICKHOUSE = os.environ.get("USE_CLICKHOUSE", "false").lower() == "true"
-CLICKHOUSE_HOST = os.environ.get("CLICKHOUSE_HOST")
-CLICKHOUSE_PORT = int(os.environ.get("CLICKHOUSE_PORT", 8443))
-CLICKHOUSE_USERNAME = os.environ.get("CLICKHOUSE_USERNAME")
-CLICKHOUSE_PASSWORD = os.environ.get("CLICKHOUSE_PASSWORD")
+# Load only if .env exists locally (not in production)
+if os.getenv("RAILWAY_ENVIRONMENT") is None:
+    load_dotenv()
+
+USE_CLICKHOUSE = os.getenv("USE_CLICKHOUSE", "false").lower() == "true"
+CLICKHOUSE_HOST = os.getenv("CLICKHOUSE_HOST")
+CLICKHOUSE_PORT = os.getenv("CLICKHOUSE_PORT")
+CLICKHOUSE_USERNAME = os.getenv("CLICKHOUSE_USERNAME")
+CLICKHOUSE_PASSWORD = os.getenv("CLICKHOUSE_PASSWORD")
