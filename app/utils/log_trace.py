@@ -3,6 +3,7 @@ from datetime import datetime
 import clickhouse_connect
 
 USE_CLICKHOUSE = os.getenv("USE_CLICKHOUSE", "false").lower() == "true"
+
 print("DEBUG: USE_CLICKHOUSE =", os.getenv("USE_CLICKHOUSE"))
 
 
@@ -19,10 +20,10 @@ def log_trace(trace_id, agent_id, channel, token_used=None, fallback_path=None, 
         return
 
     client = clickhouse_connect.get_client(
-        host=os.getenv("CLICKHOUSE_HOST"),
-        port=int(os.getenv("CLICKHOUSE_PORT", "8443")),
-        username=os.getenv("CLICKHOUSE_USERNAME"),
-        password=os.getenv("CLICKHOUSE_PASSWORD"),
+        host=CLICKHOUSE_HOST,
+        port=CLICKHOUSE_PORT,
+        username=CLICKHOUSE_USERNAME,
+        password=CLICKHOUSE_PASSWORD,
         secure=True
     )
 
