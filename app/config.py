@@ -1,9 +1,15 @@
 import os
 from dotenv import load_dotenv
 
-# Load only if .env exists locally (not in production)
-if os.getenv("RAILWAY_ENVIRONMENT") is None:
+# Railway automatically provides env vars at runtime
+RAILWAY_ENV = os.getenv("RAILWAY_ENVIRONMENT")
+
+# Load .env file only when running locally (i.e., not on Railway)
+if RAILWAY_ENV is None:
+    print("📦 Loading from .env (local mode)")
     load_dotenv()
+else:
+    print("🚀 Using Railway runtime environment")
 
 USE_CLICKHOUSE = os.getenv("USE_CLICKHOUSE", "false").lower() == "true"
 CLICKHOUSE_HOST = os.getenv("CLICKHOUSE_HOST")
