@@ -10,6 +10,7 @@ clickhouse-connect==0.6.6
 dataclasses-json==0.6.7
 Deprecated==1.2.18
 frozenlist==1.7.0
+fastapi
 greenlet==3.2.3
 h11==0.16.0
 httpcore==1.0.9
