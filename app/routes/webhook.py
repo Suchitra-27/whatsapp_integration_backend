@@ -3,6 +3,7 @@ import uuid
 from app.utils.log_trace import log_trace
 from app.utils.safe_mode import check_wallet, verify_agent_signature
 from app.routes.agent import query_agent, AgentQueryRequest
+from app.utils.safe_mode import NEXTEL_TOKEN
 
 router = APIRouter()
 
