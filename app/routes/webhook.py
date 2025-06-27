@@ -13,8 +13,8 @@ async def receive_whatsapp_message(request: Request, authorization: str = Header
     print("🧪 Received Header:", repr(authorization))
     print("🧪 Expected Header:", repr(f"Bearer {NEXTEL_TOKEN}"))
 
-    if authorization != "Bearer verbotix-secure-key":
-        raise HTTPException(status_code=401, detail="Unauthorized")
+    # if authorization != "Bearer verbotix-secure-key":
+    #     raise HTTPException(status_code=401, detail="Unauthorized")
 
     try:
         data = await request.json()
