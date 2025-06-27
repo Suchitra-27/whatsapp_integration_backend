@@ -4,9 +4,14 @@ from dotenv import load_dotenv
 import os
 from app.routes import webhook, send, agent
 from app.config.env import USE_CLICKHOUSE, CLICKHOUSE_HOST
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
 
 # Load environment variables from .env
 load_dotenv()
+
+limiter = Limiter(key_func=get_remote_address)
 
 app = FastAPI(
     title="Verbotix WhatsApp Integration",
@@ -21,6 +26,10 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# ✅ Register rate limit exception handler
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 # Include routers
 app.include_router(webhook.router, prefix="/webhook")

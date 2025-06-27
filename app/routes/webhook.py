@@ -4,6 +4,7 @@ from app.utils.log_trace import log_trace
 from app.utils.safe_mode import check_wallet, verify_agent_signature
 from app.routes.agent import query_agent, AgentQueryRequest
 from app.utils.safe_mode import NEXTEL_TOKEN
+from slowapi.decorator import limiter
 
 import json
 from urllib.parse import parse_qs
@@ -11,16 +12,8 @@ from urllib.parse import parse_qs
 router = APIRouter()
 
 @router.post("/whatsapp")
+@limiter.limit("5/minute") 
 async def receive_whatsapp_message(request: Request, authorization: str = Header(None)):
-    # 🔒 Log incoming headers for debugging
-    print("📋 Full Headers Received:")
-    for k, v in request.headers.items():
-        print(f"{k}: {v}")
-        if "verbotix-secure-key" in v:
-            print("🛡️ Found token inside unusual header:", k, v)
-
-    print("🧪 Received Header:", repr(authorization))
-    print("🧪 Expected Header:", repr(f"Bearer {NEXTEL_TOKEN}"))
 
     # 🔐 Temporarily skip strict token check until Nextel clarifies
     # if authorization != f"Bearer {NEXTEL_TOKEN}":
