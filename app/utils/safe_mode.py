@@ -13,9 +13,9 @@ def check_wallet(agent_id: str) -> bool:
     return False
 
 # 🔐 Validate signature sent from agent (mocked logic)
-def verify_agent_signature(signature: str) -> bool:
-    # Example logic: consider signature valid if length is 10
-    return signature is not None and len(signature) == 10
+def verify_agent_signature(agent_id: str, user_input: str) -> bool:
+    return user_input is not None and len(user_input) > 0  # or any mock logic
+
 
 # 🔐 Check if request has a valid Bearer token
 
