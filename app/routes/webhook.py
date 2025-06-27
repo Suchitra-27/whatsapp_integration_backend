@@ -19,8 +19,6 @@ async def receive_whatsapp_message(request: Request, authorization: str = Header
     try:
         data = await request.json()
         print("✅ Incoming WhatsApp Payload:", data)
-        print("🧪 Expected Token:", f"Bearer {NEXTEL_TOKEN}")
-        print("🧪 Received:", request.headers.get("Authorization"))
 
         value = data["entry"][0]["changes"][0]["value"]
         user_input = value["messages"][0]["text"]["body"]
