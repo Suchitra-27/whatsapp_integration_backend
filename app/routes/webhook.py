@@ -9,11 +9,22 @@ router = APIRouter()
 
 @router.post("/whatsapp")
 async def receive_whatsapp_message(request: Request, authorization: str = Header(None)):
-    # ✅ Secure API with token
+    # 🔐 Log all headers for debugging
+    print("📋 Full Headers Received:")
+    for k, v in request.headers.items():
+        print(f"{k}: {v}")
+
+    # 🔍 Search all headers for token
+    for k, v in request.headers.items():
+        if "verbotix-secure-key" in v:
+            print("🛡️ Found token inside unusual header:", k, v)
+
+    # 🧪 Optional: see if the expected Authorization is present
     print("🧪 Received Header:", repr(authorization))
     print("🧪 Expected Header:", repr(f"Bearer {NEXTEL_TOKEN}"))
 
-    # if authorization != "Bearer verbotix-secure-key":
+    # ✅ Token check (disabled for now)
+    # if authorization != f"Bearer {NEXTEL_TOKEN}":
     #     raise HTTPException(status_code=401, detail="Unauthorized")
 
     try:
