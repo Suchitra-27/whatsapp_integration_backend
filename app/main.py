@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 import os
-from app.routes import webhook, send
+from app.routes import webhook, send, agent
 from app.config.env import USE_CLICKHOUSE, CLICKHOUSE_HOST
 
 # Load environment variables from .env
@@ -25,6 +25,7 @@ app.add_middleware(
 # Include routers
 app.include_router(webhook.router, prefix="/webhook")
 app.include_router(send.router, prefix="/send")
+app.include_router(agent.router, prefix="/agent")
 
 # Root route
 @app.get("/")
