@@ -15,14 +15,12 @@ router = APIRouter()
 
 async def receive_whatsapp_message(request: Request, authorization: str = Header(None)):
 
-
-    # 🔐 Temporarily skip strict token check until Nextel clarifies
-    print("🧪 Received Authorization Header:", repr(authorization))
+    # print("Received Authorization Header:", repr(authorization))
     if authorization != f"Bearer {NEXTEL_TOKEN}":
         raise HTTPException(status_code=401, detail="Unauthorized")
 
     try:
-        # 🧠 Fallback decoding: support both JSON & form-urlencoded
+        # Fallback decoding: support both JSON & form-urlencoded
         content_type = request.headers.get("content-type", "")
         if "application/json" in content_type:
             data = await request.json()
@@ -44,7 +42,7 @@ async def receive_whatsapp_message(request: Request, authorization: str = Header
         phone_number = value["contacts"][0]["wa_id"]
         print(f"📨 From {phone_number}: {user_input}")
 
-        # 🔐 Wallet & Signature Checks (Mocked for now)
+        # Wallet & Signature Checks (Mocked for now)
         agent_id = "demo-agent-1"
         if not check_wallet(agent_id):
             raise HTTPException(status_code=403, detail="Agent wallet inactive")
@@ -52,13 +50,13 @@ async def receive_whatsapp_message(request: Request, authorization: str = Header
         if not verify_agent_signature(agent_id, user_input):
             raise HTTPException(status_code=403, detail="Invalid agent signature")
 
-        # 🤖 Query agent (mocked)
+        # Query agent (mocked)
         agent_request = AgentQueryRequest(agent_id=agent_id, user_input=user_input)
         agent_data = await query_agent(agent_request)
         reply = agent_data["response"]
         trace_id = agent_data["trace_id"]
 
-        # 📊 Log to ClickHouse
+        # Log to ClickHouse
         log_trace(
             trace_id=trace_id,
             agent_id=agent_id,
@@ -68,7 +66,7 @@ async def receive_whatsapp_message(request: Request, authorization: str = Header
             delivery_status="replied"
         )
 
-        # ✅ Return response back to Nextel
+        # Return response back to Nextel
         return {
             "message": {
                 "type": "text",
@@ -80,7 +78,7 @@ async def receive_whatsapp_message(request: Request, authorization: str = Header
         }
 
     except Exception as e:
-        print("❌ Webhook Error:", e)
+        print("Webhook Error:", e)
         return {
             "message": {
                 "type": "text",
