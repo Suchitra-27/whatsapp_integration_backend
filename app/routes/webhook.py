@@ -7,15 +7,18 @@ from app.utils.safe_mode import NEXTEL_TOKEN
 import json
 from urllib.parse import parse_qs
 
+
+
 router = APIRouter()
 
 @router.post("/whatsapp")
 
 async def receive_whatsapp_message(request: Request, authorization: str = Header(None)):
 
+
     # 🔐 Temporarily skip strict token check until Nextel clarifies
-    # if authorization != f"Bearer {NEXTEL_TOKEN}":
-    #     raise HTTPException(status_code=401, detail="Unauthorized")
+    if authorization != f"Bearer {NEXTEL_TOKEN}":
+        raise HTTPException(status_code=401, detail="Unauthorized")
 
     try:
         # 🧠 Fallback decoding: support both JSON & form-urlencoded
