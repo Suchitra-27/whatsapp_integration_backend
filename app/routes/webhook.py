@@ -17,6 +17,7 @@ async def receive_whatsapp_message(request: Request, authorization: str = Header
 
 
     # 🔐 Temporarily skip strict token check until Nextel clarifies
+    print("🧪 Received Authorization Header:", repr(authorization))
     if authorization != f"Bearer {NEXTEL_TOKEN}":
         raise HTTPException(status_code=401, detail="Unauthorized")
 
